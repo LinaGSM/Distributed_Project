@@ -11,6 +11,8 @@ import os
 from torch.nn.parallel import DistributedDataParallel as DDP
 from args import parse_args
 import csv
+import sys
+sys.stderr = sys.stdout
 
 # Récupérer les arguments de la ligne de commande
 args = parse_args()
