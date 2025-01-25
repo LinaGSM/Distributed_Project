@@ -45,6 +45,8 @@ def run(rank, size):
     optimizer.step()
     dist.destroy_process_group()
     print(f"Finished running basic DDP example on rank {rank}.")
+    print(f"Total time: {et-st} seconds")
+
 
 if __name__ == "__main__":
     dist.init_process_group("gloo", init_method="env://")
