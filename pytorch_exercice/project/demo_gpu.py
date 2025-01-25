@@ -9,7 +9,7 @@ import torchvision
 from torch.utils.data import DataLoader
 import os
 from torch.nn.parallel import DistributedDataParallel as DDP
-from ../args import parse_args
+from args import parse_args
 import csv
 
 # Récupérer les arguments de la ligne de commande
