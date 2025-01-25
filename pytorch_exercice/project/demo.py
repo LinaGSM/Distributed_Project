@@ -73,7 +73,7 @@ def run(rank, size):
         
         # Ajouter les en-têtes si le fichier est vide
         if file.tell() == 0:
-            writer.writerow(['Number of CPU','Loading Time', 'Computation + Communication Time', 'Real Time', 'Batch Size'])
+            writer.writerow(['Number of CPU','Loading Time', 'Computation + Communication Time', 'Real Time'])
         
         start = time.time()  # Temps de début total
         
