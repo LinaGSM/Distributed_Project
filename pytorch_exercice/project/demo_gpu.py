@@ -9,9 +9,16 @@ import torchvision
 from torch.utils.data import DataLoader
 import os
 from torch.nn.parallel import DistributedDataParallel as DDP
-
+from args import parse_args
 import csv
 
+# Récupérer les arguments de la ligne de commande
+args = parse_args()
+
+# Récupérer le batch size
+batch_size = args.batch_size
+
+nom_du_fichier = 'training_time_gpu_'+str(batch_size)+'.csv'
 
 def run(rank, size):
     torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
@@ -28,15 +35,15 @@ def run(rank, size):
     dataset_size = len(dataset)
     localdataset_size = dataset_size//size
     local_dataset = torch.utils.data.Subset(dataset, range(rank*localdataset_size, (rank+1)*localdataset_size))
-    sample_size = 32//size
-    dataloader = DataLoader(local_dataset, batch_size=sample_size, shuffle=True)
+    sample_size = batch_size//size
+    dataloader = DataLoader(local_dataset, sample_size, shuffle=True)
     model = models.resnet18().to(device_id)
     model.fc = nn.Linear(model.fc.in_features, len(dataset.classes)).to(device_id)
     ddp_model = DDP(model, device_ids=[device_id])
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.SGD(ddp_model.parameters(), lr=0.001)
 
-    with open('training_time_gpu.csv', mode='a', newline='') as file:
+    with open(nom_du_fichier, mode='a', newline='') as file:
         writer = csv.writer(file)
         
         # Ajouter les en-têtes si le fichier est vide
@@ -78,22 +85,8 @@ def run(rank, size):
         # Écriture des données dans le fichier CSV
         writer.writerow([size, loading_time, computation_communication_time, real_time])
         print(f" Loading: {loading_time}s, Computation+Comm: {computation_communication_time}s, Total: {real_time}s")
-'''
-    train_images, train_labels = next(iter(dataloader))
-    train_images = train_images.to(device_id)
-    train_labels = train_labels.to(device_id)
-    et_read = time.time()
-    print(f'Loading time: {et_read-st} seconds')
-    optimizer.zero_grad()
-    outputs = ddp_model(train_images)
-    loss_fn(outputs, train_labels).backward()
-    et = time.time()
-    print(f'Computing + Communication time: {et-et_read} seconds')
-    optimizer.step()
-    dist.destroy_process_group()
-    print(f"Finished running basic DDP example on rank {rank}.")
-    print(f"Total time: {et-st} seconds")
-'''
+
+
 if __name__ == "__main__":
     dist.init_process_group("nccl", init_method="env://")
     size = dist.get_world_size()
