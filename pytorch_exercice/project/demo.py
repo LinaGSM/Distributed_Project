@@ -73,7 +73,7 @@ def run(rank, size):
         
         # Ajouter les en-têtes si le fichier est vide
         if file.tell() == 0:
-            writer.writerow(['Loading Time', 'Computation + Communication Time', 'Real Time', 'Batch Size'])
+            writer.writerow(['Number of CPU','Loading Time', 'Computation + Communication Time', 'Real Time', 'Batch Size'])
         
         start = time.time()  # Temps de début total
         
@@ -98,7 +98,7 @@ def run(rank, size):
         print(f"Total time: {real_time} seconds")
 
         # Écriture des données dans le fichier CSV
-        writer.writerow([loading_time, computation_communication_time, real_time])
+        writer.writerow([size, loading_time, computation_communication_time, real_time])
         print(f" Loading: {loading_time}s, Computation+Comm: {computation_communication_time}s, Total: {real_time}s")
 
 '''
