@@ -92,9 +92,15 @@ def run(rank, size):
         
         real_time = time.time() - start  # Temps total réel
         
+        optimizer.step()
+        dist.destroy_process_group()
+        print(f"Finished running basic DDP example on rank {rank}.")
+        print(f"Total time: {et-st} seconds")
+
         # Écriture des données dans le fichier CSV
         writer.writerow([loading_time, computation_communication_time, real_time, batch_size])
         print(f" Loading: {loading_time:.2f}s, Computation+Comm: {computation_communication_time:.2f}s, Total: {real_time:.2f}s")
+
 '''
     print(f"Start running basic DDP example on rank {rank} with model Resnet18.")
     st = time.time()
