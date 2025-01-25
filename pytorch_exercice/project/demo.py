@@ -95,10 +95,10 @@ def run(rank, size):
         optimizer.step()
         dist.destroy_process_group()
         print(f"Finished running basic DDP example on rank {rank}.")
-        print(f"Total time: {et-st} seconds")
+        print(f"Total time: {real_time} seconds")
 
         # Écriture des données dans le fichier CSV
-        writer.writerow([loading_time, computation_communication_time, real_time, batch_size])
+        writer.writerow([loading_time, computation_communication_time, real_time])
         print(f" Loading: {loading_time:.2f}s, Computation+Comm: {computation_communication_time:.2f}s, Total: {real_time:.2f}s")
 
 '''
